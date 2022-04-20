@@ -17,12 +17,6 @@ args = vars(ap.parse_args())
 # tool for edge dilation
 kernel = np.ones((3, 3), np.uint8)
 
-# load the image image, convert it to grayscale, and detect edges
-# template = cv2.imread(args["template"])
-# template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
-# template = cv2.Canny(template, 50, 200)
-# (tH, tW) = template.shape[:2]
-
 # load the image, convert it to grayscale,
 image = cv2.imread(args["image"])
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
