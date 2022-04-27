@@ -5,6 +5,10 @@ import imutils
 import glob
 import cv2
 
+
+# ------------------------------------------------------------------------------
+
+
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-t", "--templates", required=True, help="Path to template image")
@@ -13,6 +17,8 @@ ap.add_argument("-i", "--image", required=True,
 ap.add_argument("-v", "--visualize",
                 help="Flag indicating whether or not to visualize each iteration")
 args = vars(ap.parse_args())
+
+# ------------------------------------------------------------------------------
 
 # tool for edge dilation
 kernel = np.ones((3, 3), np.uint8)
@@ -27,6 +33,8 @@ kernel = np.ones((3, 3), np.uint8)
 image = cv2.imread(args["image"])
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
+# ------------------------------------------------------------------------------
+
 # loop over the images to find the template in
 for templatePath in glob.glob(args["templates"] + "/*.png"):
     # load the image, convert it to grayscale, and initialize the
@@ -37,6 +45,8 @@ for templatePath in glob.glob(args["templates"] + "/*.png"):
     # dilate edges of template
     # template = cv2.dilate(templateC, kernel, iterations=1)
     (tH, tW) = template.shape[:2]
+
+    # ------------------------------------------------------------------------------
 
     found = None
     # loop over the scales of the image
@@ -50,6 +60,9 @@ for templatePath in glob.glob(args["templates"] + "/*.png"):
         if resized.shape[0] < tH or resized.shape[1] < tW:
             break
 
+
+    # ------------------------------------------------------------------------------
+
         # detect edges in the resized, grayscale image and apply template
         # matching to find the template in the image
         edgedC = cv2.Canny(resized, 50, 200)
@@ -57,19 +70,28 @@ for templatePath in glob.glob(args["templates"] + "/*.png"):
         edged = cv2.dilate(edgedC, kernel, iterations=1)
 
         result = cv2.matchTemplate(edged, template, cv2.TM_CCOEFF)
+
+        ## this will give us the different values in result
         (_, maxVal, _, maxLoc) = cv2.minMaxLoc(result)
+
+    # ------------------------------------------------------------------------------
+
         # check to see if the iteration should be visualized
         if args.get("visualize", False):
             # draw a bounding box around the detected region
             clone = np.dstack([edged, edged, edged])
             cv2.rectangle(clone, (maxLoc[0], maxLoc[1]),
-                          (maxLoc[0] + tW, maxLoc[1] + tH), (0, 0, 255), 2)
+                          (maxLoc[0] + tW, maxLoc[1] + tH), (0, 0, 255), 5)
             cv2.imshow("Visualize", clone)
             cv2.waitKey(0)
         # if we have found a new maximum correlation value, then update
         # the bookkeeping variable
         if found is None or maxVal > found[0]:
             found = (maxVal, maxLoc, r)
+
+    # ------------------------------------------------------------------------------
+
+
     # unpack the bookkeeping variable and compute the (x, y) coordinates
     # of the bounding box based on the resized rating
     (_, maxLoc, r) = found
@@ -78,6 +100,8 @@ for templatePath in glob.glob(args["templates"] + "/*.png"):
     cimage = image.copy()
     # draw a bounding box around the detected result and display the image
     cv2.rectangle(cimage, (startX, startY), (endX, endY), (0, 0, 255), 2)
+
+    # ------------------------------------------------------------------------------
 
     cv2.namedWindow("output", cv2.WINDOW_AUTOSIZE)  # Create window with freedom of dimensions
     imS = cv2.resize(cimage, (960, 960))  # Resize image
