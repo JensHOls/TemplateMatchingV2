@@ -8,7 +8,6 @@ import cv2
 
 # ------------------------------------------------------------------------------
 
-
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-t", "--templates", required=True, help="Path to template image")
@@ -98,10 +97,11 @@ for templatePath in glob.glob(args["templates"] + "/*.png"):
     (startX, startY) = (int(maxLoc[0] * r), int(maxLoc[1] * r))
     (endX, endY) = (int((maxLoc[0] + tW) * r), int((maxLoc[1] + tH) * r))
     cimage = image.copy()
-    # draw a bounding box around the detected result and display the image
-    cv2.rectangle(cimage, (startX, startY), (endX, endY), (0, 0, 255), 2)
 
     # ------------------------------------------------------------------------------
+
+    # draw a bounding box around the detected result and display the image
+    cv2.rectangle(cimage, (startX, startY), (endX, endY), (0, 0, 255), 2)
 
     cv2.namedWindow("output", cv2.WINDOW_AUTOSIZE)  # Create window with freedom of dimensions
     imS = cv2.resize(cimage, (960, 960))  # Resize image
