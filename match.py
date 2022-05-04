@@ -80,6 +80,6 @@ for templatePath in glob.glob(args["templates"] + "/*.png"):
     cv2.rectangle(cimage, (startX, startY), (endX, endY), (0, 0, 255), 2)
 
     cv2.namedWindow("output", cv2.WINDOW_AUTOSIZE)  # Create window with freedom of dimensions
-    imS = cv2.resize(cimage, (600, 600))  # Resize image
+    imS = cv2.resize(cimage, (700, 600))  # Resize image
     cv2.imshow("output", imS)  # Show image
     cv2.waitKey(0)  # Display the image infinitely until any keypress
